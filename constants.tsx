@@ -8,7 +8,8 @@ import {
   Box,
   ShieldCheck,
   ClipboardCheck,
-  Users
+  Users,
+  FileSpreadsheet
 } from 'lucide-react';
 import { ISPClient, Connectivity, Router, Switch, OLT, CoreServices, ChecklistItem, Peer, InternalLink, Hardware, VM } from './types.ts';
 
@@ -20,7 +21,8 @@ export const MENU_ITEMS = [
   { id: 'switches', label: 'Switches', icon: <Zap size={18}/> },
   { id: 'olts', label: 'OLTs', icon: <Box size={18}/> },
   { id: 'services', label: 'Serviços Core', icon: <ShieldCheck size={18}/> },
-  { id: 'checklist', label: 'Checklist', icon: <ClipboardCheck size={18}/> },
+  { id: 'checklist', label: 'Checklist IA', icon: <ClipboardCheck size={18}/> },
+  { id: 'import-spreadsheet', label: 'Importar Planilhas', icon: <FileSpreadsheet size={18}/> },
 ];
 
 export const MOCK_CLIENTS: ISPClient[] = [
@@ -79,98 +81,18 @@ export const GROWTH_DATA = [
   { month: 'Jun', clients: 10250 },
 ];
 
-/**
- * Mock BGP Peers for NetworkView
- */
 export const MOCK_PEERS: Peer[] = [
-  {
-    pop: 'SPO-01',
-    localIp: '177.91.160.1',
-    neighbor: 'Lumen',
-    asn: '3356',
-    type: 'Transit',
-    bfd: true,
-    status: 'UP',
-    remoteIp: '177.91.160.2',
-    circuitId: 'CIR-9988-LMN'
-  },
-  {
-    pop: 'SPO-01',
-    localIp: '177.91.160.5',
-    neighbor: 'IX.br SP',
-    asn: '26162',
-    type: 'PTT',
-    bfd: false,
-    status: 'UP',
-    remoteIp: '187.16.192.1',
-    circuitId: 'PTT-SP-001'
-  }
+  { pop: 'SPO-01', localIp: '177.91.160.1', neighbor: 'Lumen', asn: '3356', type: 'Transit', bfd: true, status: 'UP', remoteIp: '177.91.160.2', circuitId: 'CIR-9988-LMN' }
 ];
 
-/**
- * Mock Internal Links for NetworkView
- */
 export const MOCK_INTERNAL_LINKS: InternalLink[] = [
-  {
-    localSwitch: 'SW-CORE-01',
-    remoteSwitch: 'SW-AGG-01',
-    localIp: '10.255.0.1/30',
-    vlan: '100',
-    protocol: 'OSPF',
-    bfd: true,
-    mtu: '9000',
-    status: 'UP'
-  }
+  { localSwitch: 'SW-CORE-01', remoteSwitch: 'SW-AGG-01', localIp: '10.255.0.1/30', vlan: '100', protocol: 'OSPF', bfd: true, mtu: '9000', status: 'UP' }
 ];
 
-/**
- * Mock Hardware for InfrastructureView
- */
 export const MOCK_HARDWARE: Hardware[] = [
-  {
-    hostname: 'HV-PROD-01',
-    managementIp: '10.10.10.11',
-    model: 'Dell R740',
-    resources: '2x Xeon Gold, 256GB RAM',
-    hypervisor: 'Proxmox 8.1',
-    raid: 'ZFS Raid10',
-    warranty: 'JAN/2026',
-    location: 'Rack 04 - DC SPO'
-  },
-  {
-    hostname: 'HV-PROD-02',
-    managementIp: '10.10.10.12',
-    model: 'Dell R740',
-    resources: '2x Xeon Gold, 256GB RAM',
-    hypervisor: 'Proxmox 8.1',
-    raid: 'ZFS Raid10',
-    warranty: 'JAN/2026',
-    location: 'Rack 04 - DC SPO'
-  }
+  { hostname: 'HV-PROD-01', managementIp: '10.10.10.11', model: 'Dell R740', resources: '2x Xeon Gold, 256GB RAM', hypervisor: 'Proxmox 8.1', raid: 'ZFS Raid10', warranty: 'JAN/2026', location: 'Rack 04 - DC SPO' }
 ];
 
-/**
- * Mock VMs for InfrastructureView
- */
 export const MOCK_VMS: VM[] = [
-  {
-    name: 'DNS-REC-01',
-    internalIp: '177.91.160.10',
-    service: 'DNS Recursivo',
-    host: 'HV-PROD-01',
-    resources: '4 vCPU, 8GB RAM',
-    os: 'Debian 12',
-    backup: 'DIÁRIO',
-    status: 'UP'
-  },
-  {
-    name: 'ZABBIX-SRV',
-    internalIp: '10.10.10.50',
-    service: 'Monitoramento',
-    host: 'HV-PROD-02',
-    resources: '8 vCPU, 16GB RAM',
-    os: 'Ubuntu 22.04',
-    backup: 'DIÁRIO',
-    status: 'UP'
-  }
+  { name: 'DNS-REC-01', internalIp: '177.91.160.10', service: 'DNS Recursivo', host: 'HV-PROD-01', resources: '4 vCPU, 8GB RAM', os: 'Debian 12', backup: 'DIÁRIO', status: 'UP' }
 ];

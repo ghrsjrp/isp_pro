@@ -3,13 +3,13 @@ import React, { useState } from 'react';
 import Sidebar from './components/Sidebar.tsx';
 import Dashboard from './components/Dashboard.tsx';
 import ClientManager from './components/ClientManager.tsx';
-import ServicesView from './components/ServicesView.tsx';
 import ChecklistView from './components/ChecklistView.tsx';
 import StatusBadge from './components/StatusBadge.tsx';
 import GenericModal from './components/GenericModal.tsx';
 import { CRUDTable } from './components/CRUDTable.tsx';
 import NetworkView from './components/NetworkView.tsx';
 import InfrastructureView from './components/InfrastructureView.tsx';
+import SpreadsheetViewer from './components/SpreadsheetViewer.tsx';
 import { Bell, Users, Settings } from 'lucide-react';
 import { MOCK_CLIENTS, MOCK_CONNECTIVITY, MOCK_ROUTERS, MOCK_SWITCHES, MOCK_OLTS } from './constants.tsx';
 import { ISPClient, Connectivity, Router, Switch, OLT } from './types.ts';
@@ -42,7 +42,7 @@ const App: React.FC = () => {
 
   const handleSave = () => {
     setIsModalOpen(false);
-    alert('Operação simulada no Dashboard. Para persistência real, utilize a Wiki SSR.');
+    alert('Operação simulada. A persistência real ocorre no backend Docker/Postgres.');
   };
 
   const renderContent = () => {
@@ -132,6 +132,7 @@ const App: React.FC = () => {
       );
       case 'services': return <InfrastructureView />;
       case 'checklist': return <ChecklistView />;
+      case 'import-spreadsheet': return <SpreadsheetViewer />;
       default: return <Dashboard />;
     }
   };
