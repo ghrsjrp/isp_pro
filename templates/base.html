@@ -1,0 +1,58 @@
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ISP Consultant Pro - Wiki</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        :root { --isp-dark: #0f172a; --isp-blue: #2563eb; }
+        body { background-color: #f1f5f9; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .sidebar { background-color: var(--isp-dark); min-height: 100vh; color: white; position: sticky; top: 0; }
+        .card { border: none; border-radius: 12px; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
+        .btn-primary { background-color: var(--isp-blue); border: none; padding: 10px 20px; border-radius: 8px; }
+        .nav-link { color: #94a3b8; border-radius: 8px !important; margin-bottom: 5px; }
+        .nav-link:hover, .nav-link.active { color: white; background: rgba(255,255,255,0.05) !important; }
+        .nav-pills .nav-link.active { background-color: var(--isp-blue) !important; }
+        .breadcrumb-item a { text-decoration: none; color: var(--isp-blue); }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            {% if user %}
+            <div class="col-md-2 sidebar p-4 d-none d-md-block shadow">
+                <h4 class="mb-5 text-center text-primary fw-bold tracking-tight">ISP <span class="text-white">WIKI</span></h4>
+                <ul class="nav flex-column gap-1">
+                    <li class="nav-item"><a href="/" class="nav-link"><i class="bi bi-speedometer2 me-2"></i> Dashboard</a></li>
+                    <li class="nav-item"><a href="/isp/new" class="nav-link"><i class="bi bi-plus-circle me-2"></i> Novo Cliente</a></li>
+                </ul>
+                <div class="mt-auto pt-5">
+                    <hr class="text-secondary">
+                    <div class="small text-secondary mb-2">Logado como: <br><strong class="text-white">{{ user }}</strong></div>
+                    <a href="/logout" class="btn btn-sm btn-outline-danger w-100 mt-2"><i class="bi bi-box-arrow-left"></i> Sair</a>
+                </div>
+            </div>
+            {% endif %}
+            <main class="col p-4">
+                {% block content %}{% endblock %}
+            </main>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Manter a aba ativa após o recarregamento (âncoras na URL)
+        document.addEventListener("DOMContentLoaded", function() {
+            var hash = window.location.hash;
+            if (hash) {
+                var triggerEl = document.querySelector('button[data-bs-target="' + hash + '"]');
+                if (triggerEl) {
+                    bootstrap.Tab.getOrCreateInstance(triggerEl).show();
+                }
+            }
+        });
+    </script>
+</body>
+</html>

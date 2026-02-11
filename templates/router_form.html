@@ -1,0 +1,115 @@
+
+{% extends "base.html" %}
+{% block content %}
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
+    <li class="breadcrumb-item"><a href="/isp/{{ isp.id }}">{{ isp.name }}</a></li>
+    <li class="breadcrumb-item active">Roteador</li>
+  </ol>
+</nav>
+
+<div class="card p-4 shadow-sm border-0">
+    <h3 class="fw-bold mb-4">{% if router %}Editar{% else %}Novo{% endif %} Roteador</h3>
+    <form action="/isp/{{ isp.id }}/router/save" method="POST">
+        {% if router %}<input type="hidden" name="id" value="{{ router.id }}">{% endif %}
+        
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label class="form-label fw-bold small">Hostname (Nome do Dispositivo)</label>
+                <input type="text" name="hostname" class="form-control" required placeholder="Ex: BRD-SPO-01-HUAWEI" value="{{ router.hostname if router else '' }}">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label fw-bold small">Fabricante (Vendor)</label>
+                <select name="vendor" class="form-select" required>
+                    <option value="Huawei" {% if router and router.vendor == 'Huawei' %}selected{% endif %}>Huawei</option>
+                    <option value="Mikrotik" {% if router and router.vendor == 'Mikrotik' %}selected{% endif %}>Mikrotik</option>
+                    <option value="Cisco" {% if router and router.vendor == 'Cisco' %}selected{% endif %}>Cisco</option>
+                    <option value="Juniper" {% if router and router.vendor == 'Juniper' %}selected{% endif %}>Juniper</option>
+                    <option value="Nokia" {% if router and router.vendor == 'Nokia' %}selected{% endif %}>Nokia</option>
+                    <option value="Outro" {% if router and router.vendor == 'Outro' %}selected{% endif %}>Outro / Whitebox</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label fw-bold small">Modelo</label>
+                <input type="text" name="model" class="form-control" placeholder="Ex: NE20E-S2F, CCR2216" value="{{ router.model if router else '' }}">
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label fw-bold small">Função na Rede</label>
+                <select name="role" class="form-select" required>
+                    <option value="Borda (Peering)" {% if router and router.role == 'Borda (Peering)' %}selected{% endif %}>Borda (Peering/BGP)</option>
+                    <option value="BNG (Concentrador)" {% if router and router.role == 'BNG (Concentrador)' %}selected{% endif %}>BNG (Concentrador PPPoE/IPoE)</option>
+                    <option value="Core (Espinha)" {% if router and router.role == 'Core (Espinha)' %}selected{% endif %}>Core (Espinha Dorsal)</option>
+                    <option value="Borda+BNG" {% if router and router.role == 'Borda+BNG' %}selected{% endif %}>Borda + BNG (Híbrido)</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label fw-bold small">IP de Gerência (Acesso Local/Remoto)</label>
+                <input type="text" name="management_ip" class="form-control" placeholder="Ex: 10.255.0.1" value="{{ router.management_ip if router else '' }}">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label fw-bold small">Versão do SO / Firmware</label>
+                <input type="text" name="software_version" class="form-control" placeholder="Ex: V800R012, 7.12.1" value="{{ router.software_version if router else '' }}">
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label fw-bold small">POP de Instalação</label>
+                <select name="pop_id" class="form-select" required>
+                    {% for pop in isp.pops %}
+                    <option value="{{ pop.id }}" {% if router and router.pop_id == pop.id %}selected{% endif %}>{{ pop.name }} ({{ pop.city_uf }})</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <hr class="my-4">
+            <h5 class="fw-bold mb-3"><i class="bi bi-gear-wide-connected me-2"></i> Recursos & Protocolos Ativos</h5>
+
+            <div class="col-md-12">
+                <div class="d-flex flex-wrap gap-4 bg-light p-3 rounded border">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="has_bgp" value="True" {% if router and router.has_bgp %}checked{% endif %}>
+                        <label class="form-check-label fw-bold small">BGP (External/Internal)</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="has_ospf" value="True" {% if router and router.has_ospf %}checked{% endif %}>
+                        <label class="form-check-label fw-bold small">OSPF (IGP)</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="has_mpls" value="True" {% if router and router.has_mpls %}checked{% endif %}>
+                        <label class="form-check-label fw-bold small">MPLS (LDP/RSVP/SR)</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="has_cgnat" value="True" {% if router and router.has_cgnat %}checked{% endif %}>
+                        <label class="form-check-label fw-bold small">CGNAT (NAPT/NAT444)</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="has_ipv6_active" value="True" {% if router and router.has_ipv6_active %}checked{% endif %}>
+                        <label class="form-check-label fw-bold small">IPv6 Habilitado</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 mt-3">
+                <label class="form-label fw-bold small text-primary">Status do Backup Automático</label>
+                <select name="backup_status" class="form-select">
+                    <option value="OK" {% if router and router.backup_status == 'OK' %}selected{% endif %}>OK (Sincronizado)</option>
+                    <option value="Falha" {% if router and router.backup_status == 'Falha' %}selected{% endif %}>Falha (Verificar!)</option>
+                    <option value="Pendente" {% if router and router.backup_status == 'Pendente' %}selected{% endif %}>Pendente / Em Configuração</option>
+                    <option value="Nao Configurado" {% if router and router.backup_status == 'Nao Configurado' %}selected{% endif %}>Não Configurado</option>
+                </select>
+            </div>
+
+            <div class="col-12 mt-3">
+                <label class="form-label fw-bold small">Notas Técnicas do Consultor</label>
+                <textarea name="notes" class="form-control" rows="4" placeholder="Detalhes sobre filtros BGP, limites de sessões PPPoE, configurações específicas de QoS ou pendências de upgrade.">{{ router.notes if router else '' }}</textarea>
+            </div>
+        </div>
+
+        <div class="mt-5 d-flex gap-2">
+            <button type="submit" class="btn btn-primary px-5 shadow">Salvar Roteador</button>
+            <a href="/isp/{{ isp.id }}#roteadores" class="btn btn-light px-5">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

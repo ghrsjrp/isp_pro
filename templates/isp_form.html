@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card p-4">
+    <h3 class="mb-4">{% if isp %}Editar{% else %}Cadastrar Novo{% endif %} ISP</h3>
+    <form action="/isp/save" method="POST">
+        {% if isp %}<input type="hidden" name="id" value="{{ isp.id }}">{% endif %}
+        
+        <div class="row g-3">
+            <div class="col-md-8">
+                <label class="form-label fw-bold">Razão Social</label>
+                <input type="text" name="name" class="form-control" required value="{{ isp.name if isp else '' }}">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label fw-bold">CNPJ</label>
+                <input type="text" name="cnpj" class="form-control" value="{{ isp.cnpj if isp else '' }}">
+            </div>
+            
+            <div class="col-md-4">
+                <label class="form-label fw-bold">N. Assinantes</label>
+                <input type="number" name="subscribers" class="form-control" value="{{ isp.subscribers if isp else 0 }}">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label fw-bold">ERP Utilizado</label>
+                <input type="text" name="erp" class="form-control" value="{{ isp.erp if isp else '' }}">
+            </div>
+            
+            <div class="col-12">
+                <label class="form-label fw-bold">Topologia de Rede</label>
+                <textarea name="topology" class="form-control" rows="3">{{ isp.topology if isp else '' }}</textarea>
+            </div>
+
+            <div class="col-12 mt-4">
+                <h5 class="fw-bold">Capacidades Próprias</h5>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" name="has_asn" value="True" {% if isp and isp.has_asn %}checked{% endif %}>
+                    <label class="form-check-label">ASN Próprio</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" name="has_ipv4" value="True" {% if isp and isp.has_ipv4 %}checked{% endif %}>
+                    <label class="form-check-label">IPv4 Próprio</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" name="has_ipv6" value="True" {% if isp and isp.has_ipv6 %}checked{% endif %}>
+                    <label class="form-check-label">IPv6 Próprio</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-5 d-flex gap-2">
+            <button type="submit" class="btn btn-primary px-5">Salvar ISP</button>
+            <a href="/" class="btn btn-light px-5">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

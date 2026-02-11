@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15
+    container_name: isp_wiki_db
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: isp_password
+      POSTGRES_DB: isp_wiki
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d isp_wiki"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build: .
+    container_name: isp_wiki_app
+    ports:
+      - "8080:80"
+    environment:
+      DATABASE_URL: postgresql://admin:isp_password@db:5432/isp_wiki
+      SECRET_KEY: "super_secret_key_para_consultoria"
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  postgres_data:

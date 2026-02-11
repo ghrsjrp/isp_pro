@@ -1,0 +1,77 @@
+
+{% extends "base.html" %}
+{% block content %}
+<div class="card p-4 shadow-sm border-0">
+    <h3 class="fw-bold mb-4"><i class="bi bi-gear-fill me-2 text-primary"></i> Configuração de Serviços Core</h3>
+    <form action="/isp/{{ isp.id }}/services/save" method="POST">
+        
+        <div class="row g-4">
+            <!-- DNS SECTION -->
+            <div class="col-12"><h5 class="fw-bold text-primary border-bottom pb-2">DNS & Sincronismo</h5></div>
+            
+            <div class="col-md-3">
+                <label class="form-label small fw-bold">Arquitetura de Rede</label>
+                <select name="dns_type" class="form-select">
+                    <option value="Anycast" {% if isp.core_services.dns_type == 'Anycast' %}selected{% endif %}>Anycast (Recomendado)</option>
+                    <option value="Unicast" {% if isp.core_services.dns_type == 'Unicast' %}selected{% endif %}>Unicast</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label small fw-bold">Software Resolver</label>
+                <input type="text" name="dns_software" class="form-control" placeholder="Ex: Unbound, Bind9" value="{{ isp.core_services.dns_software or '' }}">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label small fw-bold">IPv4 de Escuta (VIP)</label>
+                <input type="text" name="dns_ipv4" class="form-control" placeholder="Ex: 177.x.x.x" value="{{ isp.core_services.dns_ipv4 or '' }}">
+            </div>
+            <div class="col-md-3 d-flex align-items-end">
+                <div class="form-check form-switch mb-2">
+                    <input class="form-check-input" type="checkbox" name="ntp_local_server" value="True" {% if isp.core_services.ntp_local_server %}checked{% endif %}>
+                    <label class="form-check-label fw-bold small">Servidor NTP Local</label>
+                </div>
+            </div>
+
+            <!-- CGNAT SECTION -->
+            <div class="col-12 mt-4"><h5 class="fw-bold text-amber-600 border-bottom pb-2">CGNAT (Deterministic/PBA)</h5></div>
+            
+            <div class="col-md-4">
+                <label class="form-label small fw-bold">Modo de Alocação de Portas</label>
+                <select name="cgnat_mode" class="form-select">
+                    <option value="PBA (Deterministic)" {% if isp.core_services.cgnat_mode == 'PBA (Deterministic)' %}selected{% endif %}>PBA (Deterministic)</option>
+                    <option value="Dynamic" {% if isp.core_services.cgnat_mode == 'Dynamic' %}selected{% endif %}>Dinâmico (Stateful)</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label small fw-bold">Software/Hardware CGNAT</label>
+                <input type="text" name="cgnat_log_system" class="form-control" placeholder="Ex: Huawei CGN, Mikrotik Script, 6WIND" value="{{ isp.core_services.cgnat_log_system or '' }}">
+            </div>
+            
+            <div class="col-md-6">
+                <label class="form-label small fw-bold">Pool de IPs Públicos (Saída)</label>
+                <textarea name="cgnat_public_pool" class="form-control" rows="2" placeholder="Ex: 177.x.x.0/24, 189.x.x.0/22">{{ isp.core_services.cgnat_public_pool or '' }}</textarea>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label small fw-bold">Pool de IPs Privados (Clientes)</label>
+                <textarea name="cgnat_private_pool" class="form-control" rows="2" placeholder="Ex: 100.64.0.0/10">{{ isp.core_services.cgnat_private_pool or '' }}</textarea>
+            </div>
+
+            <!-- TOOLS SECTION -->
+            <div class="col-12 mt-4"><h5 class="fw-bold text-dark border-bottom pb-2">Stack de Ferramentas</h5></div>
+            
+            <div class="col-md-6">
+                <label class="form-label small fw-bold">Plataforma de Monitoramento</label>
+                <input type="text" name="mon_tool" class="form-control" placeholder="Zabbix + Grafana" value="{{ isp.core_services.tools.get('monitoring', '') }}">
+            </div>
+            <div class="col-md-6">
+                <label class="form-label small fw-bold">IPAM (Gestão de Blocos)</label>
+                <input type="text" name="ipam_tool" class="form-control" placeholder="phpIPAM / NetBox" value="{{ isp.core_services.tools.get('ipam', '') }}">
+            </div>
+        </div>
+
+        <div class="mt-5 d-flex gap-2">
+            <button type="submit" class="btn btn-primary px-5 shadow">Salvar Configurações</button>
+            <a href="/isp/{{ isp.id }}#servicos" class="btn btn-light px-5">Voltar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,53 @@
+
+{% extends "base.html" %}
+{% block content %}
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
+    <li class="breadcrumb-item"><a href="/isp/{{ isp.id }}">{{ isp.name }}</a></li>
+    <li class="breadcrumb-item active">POP</li>
+  </ol>
+</nav>
+
+<div class="card p-4 shadow-sm border-0">
+    <h3 class="fw-bold mb-4">{% if pop %}Editar{% else %}Novo{% endif %} POP / Site</h3>
+    <form action="/isp/{{ isp.id }}/pop/save" method="POST">
+        {% if pop %}<input type="hidden" name="id" value="{{ pop.id }}">{% endif %}
+        
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label class="form-label fw-bold small">Identificação do Site</label>
+                <input type="text" name="name" class="form-control" required placeholder="Ex: POP-CENTRO-01" value="{{ pop.name if pop else '' }}">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label fw-bold small">Cidade / UF</label>
+                <input type="text" name="city_uf" class="form-control" required placeholder="Ex: São Paulo / SP" value="{{ pop.city_uf if pop else '' }}">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label fw-bold small">Função Estratégica</label>
+                <select name="function" class="form-select" required>
+                    <option value="Core" {% if pop and pop.function == 'Core' %}selected{% endif %}>Core (Espinha Dorsal)</option>
+                    <option value="Borda" {% if pop and pop.function == 'Borda' %}selected{% endif %}>Borda (Saída IP)</option>
+                    <option value="Acesso" {% if pop and pop.function == 'Acesso' %}selected{% endif %}>Acesso (Clientes)</option>
+                    <option value="Datacenter" {% if pop and pop.function == 'Datacenter' %}selected{% endif %}>Datacenter / Hosting</option>
+                </select>
+            </div>
+            
+            <div class="col-12">
+                <label class="form-label fw-bold small">Endereço Físico</label>
+                <input type="text" name="address" class="form-control" placeholder="Rua, Número, Bairro, CEP" value="{{ pop.address if pop else '' }}">
+            </div>
+
+            <div class="col-12">
+                <label class="form-label fw-bold small">Observações Técnicas do Site</label>
+                <textarea name="notes" class="form-control" rows="4" placeholder="Detalhes sobre infraestrutura, energia, refrigeração ou acesso ao local.">{{ pop.notes if pop else '' }}</textarea>
+            </div>
+        </div>
+
+        <div class="mt-5 d-flex gap-2">
+            <button type="submit" class="btn btn-primary px-5">Salvar Site</button>
+            <a href="/isp/{{ isp.id }}#pops" class="btn btn-light px-5">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

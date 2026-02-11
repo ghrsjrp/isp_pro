@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card p-4 shadow-sm border-0">
+    <h3 class="fw-bold mb-4">{% if olt %}Editar{% else %}Nova{% endif %} OLT (Headend)</h3>
+    <form action="/isp/{{ isp.id }}/olt/save" method="POST">
+        {% if olt %}<input type="hidden" name="id" value="{{ olt.id }}">{% endif %}
+        <div class="row g-3">
+            <div class="col-md-6"><label class="form-label small fw-bold">Hostname</label><input type="text" name="hostname" class="form-control" required value="{{ olt.hostname if olt else '' }}"></div>
+            <div class="col-md-3">
+                <label class="form-label small fw-bold">Fabricante</label>
+                <select name="vendor" class="form-select">
+                    <option value="Fiberhome" {% if olt and olt.vendor == 'Fiberhome' %}selected{% endif %}>Fiberhome</option>
+                    <option value="Huawei" {% if olt and olt.vendor == 'Huawei' %}selected{% endif %}>Huawei</option>
+                    <option value="Nokia" {% if olt and olt.vendor == 'Nokia' %}selected{% endif %}>Nokia</option>
+                    <option value="Parks" {% if olt and olt.vendor == 'Parks' %}selected{% endif %}>Parks</option>
+                    <option value="ZTE" {% if olt and olt.vendor == 'ZTE' %}selected{% endif %}>ZTE</option>
+                    <option value="V-Solution" {% if olt and olt.vendor == 'V-Solution' %}selected{% endif %}>V-Solution</option>
+                </select>
+            </div>
+            <div class="col-md-3"><label class="form-label small fw-bold">Modelo</label><input type="text" name="model" class="form-control" value="{{ olt.model if olt else '' }}"></div>
+            <div class="col-md-4"><label class="form-label small fw-bold">IP Gerência</label><input type="text" name="management_ip" class="form-control" value="{{ olt.management_ip if olt else '' }}"></div>
+            <div class="col-md-4"><label class="form-label small fw-bold">Qtd Portas PON Ativas</label><input type="number" name="pon_ports" class="form-control" value="{{ olt.pon_ports if olt else 0 }}"></div>
+            <div class="col-md-4"><label class="form-label small fw-bold">Assinantes Ativos</label><input type="number" name="active_subs" class="form-control" value="{{ olt.active_subs if olt else 0 }}"></div>
+            
+            <div class="col-md-4">
+                <label class="form-label small fw-bold">POP</label>
+                <select name="pop_id" class="form-select">
+                    {% for pop in isp.pops %}<option value="{{ pop.id }}">{{ pop.name }}</option>{% endfor %}
+                </select>
+            </div>
+            
+            <div class="col-md-8 d-flex align-items-center mt-4">
+                <div class="form-check form-switch p-3 border rounded bg-light w-100">
+                    <input class="form-check-input ms-0 me-2" type="checkbox" name="is_unlocked" value="True" {% if olt and olt.is_unlocked %}checked{% endif %}>
+                    <label class="form-check-label fw-bold">OLT Desbloqueada (Aceita ONUs de Terceiros)</label>
+                </div>
+            </div>
+
+            <div class="col-12"><label class="form-label small fw-bold">Observações (Uplinks 10G, Versão de Firmware, Slots Ocupados)</label><textarea name="notes" class="form-control" rows="3">{{ olt.notes if olt else '' }}</textarea></div>
+        </div>
+        <div class="mt-5 d-flex gap-2">
+            <button type="submit" class="btn btn-primary px-5 shadow">Salvar OLT</button>
+            <a href="/isp/{{ isp.id }}#olts" class="btn btn-light px-5">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card p-4 shadow-sm border-0">
+    <h3 class="fw-bold mb-4">{% if switch %}Editar{% else %}Novo{% endif %} Switch</h3>
+    <form action="/isp/{{ isp.id }}/switch/save" method="POST">
+        {% if switch %}<input type="hidden" name="id" value="{{ switch.id }}">{% endif %}
+        <div class="row g-3">
+            <div class="col-md-6"><label class="form-label small fw-bold">Hostname</label><input type="text" name="hostname" class="form-control" required value="{{ switch.hostname if switch else '' }}"></div>
+            <div class="col-md-3">
+                <label class="form-label small fw-bold">Fabricante</label>
+                <select name="vendor" class="form-select">
+                    <option value="Datacom" {% if switch and switch.vendor == 'Datacom' %}selected{% endif %}>Datacom</option>
+                    <option value="Huawei" {% if switch and switch.vendor == 'Huawei' %}selected{% endif %}>Huawei</option>
+                    <option value="Dell" {% if switch and switch.vendor == 'Dell' %}selected{% endif %}>Dell</option>
+                    <option value="Cisco" {% if switch and switch.vendor == 'Cisco' %}selected{% endif %}>Cisco</option>
+                    <option value="Mikrotik" {% if switch and switch.vendor == 'Mikrotik' %}selected{% endif %}>Mikrotik</option>
+                </select>
+            </div>
+            <div class="col-md-3"><label class="form-label small fw-bold">Modelo</label><input type="text" name="model" class="form-control" value="{{ switch.model if switch else '' }}"></div>
+            <div class="col-md-4"><label class="form-label small fw-bold">IP Gerência</label><input type="text" name="management_ip" class="form-control" value="{{ switch.management_ip if switch else '' }}"></div>
+            <div class="col-md-4">
+                <label class="form-label small fw-bold">POP</label>
+                <select name="pop_id" class="form-select">
+                    {% for pop in isp.pops %}<option value="{{ pop.id }}">{{ pop.name }}</option>{% endfor %}
+                </select>
+            </div>
+            <div class="col-md-4"><label class="form-label small fw-bold">Versão Software</label><input type="text" name="software_version" class="form-control" value="{{ switch.software_version if switch else '' }}"></div>
+            
+            <div class="col-12 bg-light p-3 rounded">
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" name="is_l3" value="True" {% if switch and switch.is_l3 %}checked{% endif %}>
+                    <label class="form-check-label fw-bold">Camada 3 (Routing)</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" name="has_ospf" value="True" {% if switch and switch.has_ospf %}checked{% endif %}>
+                    <label class="form-check-label fw-bold">OSPF Ativo</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" name="has_mpls" value="True" {% if switch and switch.has_mpls %}checked{% endif %}>
+                    <label class="form-check-label fw-bold">MPLS Ativo</label>
+                </div>
+            </div>
+            
+            <div class="col-12"><label class="form-label small fw-bold">Notas Técnicas (VLANs, Stacking, Portas Uplink)</label><textarea name="notes" class="form-control" rows="3">{{ switch.notes if switch else '' }}</textarea></div>
+        </div>
+        <div class="mt-5 d-flex gap-2">
+            <button type="submit" class="btn btn-primary px-5 shadow">Salvar Switch</button>
+            <a href="/isp/{{ isp.id }}#switches" class="btn btn-light px-5">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

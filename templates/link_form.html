@@ -1,0 +1,101 @@
+
+{% extends "base.html" %}
+{% block content %}
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
+    <li class="breadcrumb-item"><a href="/isp/{{ isp.id }}">{{ isp.name }}</a></li>
+    <li class="breadcrumb-item active">Link de Conectividade</li>
+  </ol>
+</nav>
+
+<div class="card p-4 shadow-sm border-0">
+    <h3 class="fw-bold mb-4">{% if link %}Editar{% else %}Novo{% endif %} Link / Conectividade</h3>
+    <form action="/isp/{{ isp.id }}/link/save" method="POST">
+        {% if link %}<input type="hidden" name="id" value="{{ link.id }}">{% endif %}
+        
+        <div class="row g-3">
+            <div class="col-md-3">
+                <label class="form-label fw-bold small">Tipo de Conexão</label>
+                <select name="link_type" class="form-select" required>
+                    <option value="Trânsito IP" {% if link and link.link_type == 'Trânsito IP' %}selected{% endif %}>Trânsito IP</option>
+                    <option value="Transporte / Clear Channel" {% if link and link.link_type == 'Transporte / Clear Channel' %}selected{% endif %}>Transporte / Clear Channel</option>
+                    <option value="PTT / IX" {% if link and link.link_type == 'PTT / IX' %}selected{% endif %}>PTT / IX.br</option>
+                    <option value="CDN / Cache" {% if link and link.link_type == 'CDN / Cache' %}selected{% endif %}>CDN / Cache</option>
+                    <option value="Peering Privado (PNI)" {% if link and link.link_type == 'Peering Privado (PNI)' %}selected{% endif %}>Peering Privado (PNI)</option>
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label fw-bold small">Provedor / Operadora</label>
+                <input type="text" name="provider" class="form-control" required placeholder="Ex: Lumen, Vivo, Telia, IX.br SP" value="{{ link.provider if link else '' }}">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label fw-bold small">Capacidade</label>
+                <input type="text" name="capacity" class="form-control" placeholder="Ex: 10 Gbps, 100 Gbps" value="{{ link.capacity if link else '' }}">
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label fw-bold small">POP de Terminação</label>
+                <select name="pop_id" class="form-select" required>
+                    {% for pop in isp.pops %}
+                    <option value="{{ pop.id }}" {% if link and link.pop_id == pop.id %}selected{% endif %}>{{ pop.name }} ({{ pop.city_uf }})</option>
+                    {% else %}
+                    <option disabled>Nenhum POP cadastrado!</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label fw-bold small">Roteador de Borda (Hostname)</label>
+                <input type="text" name="router_assigned" class="form-control" placeholder="Ex: Borda-01-Huawei" value="{{ link.router_assigned if link else '' }}">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label fw-bold small">Interface Física / Porta</label>
+                <input type="text" name="physical_interface" class="form-control" placeholder="Ex: Eth-trunk1, 100GE1/0/1" value="{{ link.physical_interface if link else '' }}">
+            </div>
+
+            <hr class="my-4">
+            <h5 class="fw-bold mb-3"><i class="bi bi-diagram-3 me-2"></i> Endereçamento & BGP</h5>
+
+            <div class="col-md-2">
+                <label class="form-label fw-bold small">ASN Remoto</label>
+                <input type="text" name="remote_asn" class="form-control" placeholder="Ex: 3356" value="{{ link.remote_asn if link else '' }}">
+            </div>
+            <div class="col-md-5">
+                <label class="form-label fw-bold small">IPv4 Ponto-a-Ponto (/30 ou /31)</label>
+                <input type="text" name="ipv4_address" class="form-control" placeholder="Ex: 187.x.x.x/30" value="{{ link.ipv4_address if link else '' }}">
+            </div>
+            <div class="col-md-5">
+                <label class="form-label fw-bold small">IPv6 Ponto-a-Ponto (/126 ou /127)</label>
+                <input type="text" name="ipv6_address" class="form-control" placeholder="Ex: 2804:x:x::x/126" value="{{ link.ipv6_address if link else '' }}">
+            </div>
+
+            <div class="col-md-4 mt-3">
+                <div class="form-check form-switch p-3 border rounded">
+                    <input class="form-check-input ms-0 me-2" type="checkbox" name="is_bgp_active" value="True" {% if link and link.is_bgp_active %}checked{% endif %}>
+                    <label class="form-check-label fw-bold small">BGP Fechado / Ativo</label>
+                </div>
+            </div>
+            <div class="col-md-4 mt-3">
+                <div class="form-check form-switch p-3 border rounded">
+                    <input class="form-check-input ms-0 me-2" type="checkbox" name="is_backup" value="True" {% if link and link.is_backup %}checked{% endif %}>
+                    <label class="form-check-label fw-bold small">Rota de Backup / Contingência</label>
+                </div>
+            </div>
+            <div class="col-md-4 mt-3">
+                <label class="form-label fw-bold small">SLA Acordado (%)</label>
+                <input type="text" name="sla" class="form-control" placeholder="Ex: 99.9%" value="{{ link.sla if link else '' }}">
+            </div>
+
+            <div class="col-12 mt-3">
+                <label class="form-label fw-bold small">Observações (ID do Circuito, Suporte, etc)</label>
+                <textarea name="notes" class="form-control" rows="3">{{ link.notes if link else '' }}</textarea>
+            </div>
+        </div>
+
+        <div class="mt-5 d-flex gap-2">
+            <button type="submit" class="btn btn-primary px-5 shadow">Salvar Link</button>
+            <a href="/isp/{{ isp.id }}#conectividade" class="btn btn-light px-5">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
