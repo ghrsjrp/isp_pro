@@ -106,3 +106,60 @@ export interface AuditResult {
   summary: string;
   tasks: ChecklistItem[];
 }
+
+/**
+ * Interface for BGP Peers
+ */
+export interface Peer {
+  pop: string;
+  localIp: string;
+  neighbor: string;
+  asn: string;
+  type: string;
+  bfd: boolean;
+  status: string;
+  remoteIp: string;
+  circuitId: string;
+}
+
+/**
+ * Interface for internal IGP links
+ */
+export interface InternalLink {
+  localSwitch: string;
+  remoteSwitch: string;
+  localIp: string;
+  vlan: string;
+  protocol: string;
+  bfd: boolean;
+  mtu: string;
+  status: string;
+}
+
+/**
+ * Interface for hardware hosts
+ */
+export interface Hardware {
+  hostname: string;
+  managementIp: string;
+  model: string;
+  resources: string;
+  hypervisor: string;
+  raid: string;
+  warranty: string;
+  location: string;
+}
+
+/**
+ * Interface for virtual machines
+ */
+export interface VM {
+  name: string;
+  internalIp: string;
+  service: string;
+  host: string;
+  resources: string;
+  os: string;
+  backup: string;
+  status: string;
+}

@@ -1,38 +1,40 @@
 
-import React, { useState, useEffect } from 'react';
-import Sidebar from './components/Sidebar';
-import Dashboard from './components/Dashboard';
-import ClientManager from './components/ClientManager';
-import ServicesView from './components/ServicesView';
-import ChecklistView from './components/ChecklistView';
-import StatusBadge from './components/StatusBadge';
-import GenericModal from './components/GenericModal';
-import { CRUDTable } from './components/CRUDTable';
-import { Bell, Search, Users, Settings } from 'lucide-react';
-import { MENU_ITEMS, MOCK_CLIENTS, MOCK_CONNECTIVITY, MOCK_ROUTERS, MOCK_SWITCHES, MOCK_OLTS } from './constants';
-import { ISPClient, Connectivity, Router, Switch, OLT } from './types';
+import React, { useState } from 'react';
+import Sidebar from './components/Sidebar.tsx';
+import Dashboard from './components/Dashboard.tsx';
+import ClientManager from './components/ClientManager.tsx';
+import ServicesView from './components/ServicesView.tsx';
+import ChecklistView from './components/ChecklistView.tsx';
+import StatusBadge from './components/StatusBadge.tsx';
+import GenericModal from './components/GenericModal.tsx';
+import { CRUDTable } from './components/CRUDTable.tsx';
+import NetworkView from './components/NetworkView.tsx';
+import InfrastructureView from './components/InfrastructureView.tsx';
+import { Bell, Users, Settings } from 'lucide-react';
+import { MOCK_CLIENTS, MOCK_CONNECTIVITY, MOCK_ROUTERS, MOCK_SWITCHES, MOCK_OLTS } from './constants.tsx';
+import { ISPClient, Connectivity, Router, Switch, OLT } from './types.ts';
 
 const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [activeClientId, setActiveClientId] = useState(MOCK_CLIENTS[0].id);
   
-  const [clients, setClients] = useState<ISPClient[]>(MOCK_CLIENTS);
-  const [connectivity, setConnectivity] = useState<Connectivity[]>(MOCK_CONNECTIVITY);
-  const [routers, setRouters] = useState<Router[]>(MOCK_ROUTERS);
+  const [clients] = useState<ISPClient[]>(MOCK_CLIENTS);
+  const [connectivity] = useState<Connectivity[]>(MOCK_CONNECTIVITY);
+  const [routers] = useState<Router[]>(MOCK_ROUTERS);
   
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalType, setModalType] = useState<'client' | 'connectivity' | 'router' | 'switch' | 'olt' | 'none'>('none');
+  const [modalType, setModalType] = useState<string>('none');
   const [editingItem, setEditingItem] = useState<any>(null);
 
   const activeClient = clients.find(c => c.id === activeClientId) || clients[0];
 
-  const handleOpenAdd = (type: any) => {
+  const handleOpenAdd = (type: string) => {
     setEditingItem(null);
     setModalType(type);
     setIsModalOpen(true);
   };
 
-  const handleOpenEdit = (type: any, item: any) => {
+  const handleOpenEdit = (type: string, item: any) => {
     setEditingItem(item);
     setModalType(type);
     setIsModalOpen(true);
@@ -40,7 +42,7 @@ const App: React.FC = () => {
 
   const handleSave = () => {
     setIsModalOpen(false);
-    alert('Operação simulada. Note que a Camada React opera sobre Mocks para visualização de Dashboard.');
+    alert('Operação simulada no Dashboard. Para persistência real, utilize a Wiki SSR.');
   };
 
   const renderContent = () => {
@@ -57,7 +59,7 @@ const App: React.FC = () => {
            <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm relative group">
              <button 
                onClick={() => handleOpenEdit('client', activeClient)}
-               className="absolute top-6 right-6 p-2 bg-slate-50 text-slate-400 hover:text-blue-600 rounded-xl transition-all"
+               className="absolute top-6 right-6 p-2 bg-slate-50 text-slate-400 hover:text-indigo-600 rounded-xl transition-all"
              >
                <Settings size={18} />
              </button>
@@ -83,21 +85,7 @@ const App: React.FC = () => {
            </div>
         </div>
       );
-      case 'connectivity': return (
-        <CRUDTable<Connectivity> 
-          title="Conectividade IP"
-          data={connectivity}
-          columns={[
-            { header: 'Tipo', accessor: 'type' },
-            { header: 'Fornecedor', accessor: 'provider' },
-            { header: 'Capacidade', accessor: 'capacity' },
-            { header: 'Porta', accessor: 'interface' },
-            { header: 'Status', accessor: (item) => <StatusBadge status={item.status} /> }
-          ]}
-          onAdd={() => handleOpenAdd('connectivity')}
-          onEdit={(item) => handleOpenEdit('connectivity', item)}
-        />
-      );
+      case 'connectivity': return <NetworkView />;
       case 'routers': return (
         <CRUDTable<Router> 
           title="Roteadores de Borda e Core"
@@ -142,7 +130,7 @@ const App: React.FC = () => {
           onEdit={(item) => handleOpenEdit('olt', item)}
         />
       );
-      case 'services': return <ServicesView />;
+      case 'services': return <InfrastructureView />;
       case 'checklist': return <ChecklistView />;
       default: return <Dashboard />;
     }
@@ -158,9 +146,7 @@ const App: React.FC = () => {
              <h1 className="text-xl font-bold text-slate-800 tracking-tight">{activeTab.toUpperCase()} — {activeClient.name}</h1>
           </div>
           <div className="flex items-center gap-4">
-             <div className="relative group">
-               <button className="p-2.5 text-slate-400 hover:text-indigo-600 bg-slate-50 hover:bg-indigo-50 rounded-xl transition-all"><Bell size={20} /></button>
-             </div>
+             <button className="p-2.5 text-slate-400 hover:text-indigo-600 bg-slate-50 hover:bg-indigo-50 rounded-xl transition-all"><Bell size={20} /></button>
              <div className="h-8 w-[1px] bg-slate-100 mx-1"></div>
              <div className="flex items-center gap-3 bg-slate-900 px-4 py-2.5 rounded-2xl shadow-lg shadow-slate-900/10">
                 <div className="flex flex-col items-end">
@@ -182,30 +168,25 @@ const App: React.FC = () => {
         >
           <div className="space-y-6">
              <div className="p-4 bg-indigo-50/50 border border-indigo-100 rounded-2xl text-[11px] text-indigo-900 leading-relaxed font-medium">
-               <div className="flex items-center gap-2 mb-1">
-                 <Settings size={14} className="text-indigo-600" />
-                 <strong className="uppercase tracking-tighter">Nota de Integridade Arquitetural</strong>
-               </div>
-               A interface de Dashboard (React) utiliza dados otimizados para visualização. Para alterações de baixo nível no banco de dados operacional, utilize o portal de gestão técnica (SSR Wiki).
+               <strong>Nota de Integridade:</strong> A interface de Dashboard utiliza dados otimizados.
              </div>
              <div className="grid grid-cols-2 gap-6">
                <div className="space-y-1">
                   <label className="text-[10px] uppercase font-black text-slate-400 tracking-widest ml-1">Identificação Primária</label>
-                  <input type="text" placeholder="Ex: POP-SPO-01" className="w-full p-3.5 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 outline-none transition-all placeholder:text-slate-300" />
+                  <input type="text" placeholder="Ex: POP-SPO-01" className="w-full p-3.5 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 outline-none transition-all" />
                </div>
                <div className="space-y-1">
                   <label className="text-[10px] uppercase font-black text-slate-400 tracking-widest ml-1">Estado Operacional</label>
                   <select className="w-full p-3.5 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 outline-none transition-all">
                     <option>Ativo / Produção</option>
                     <option>Em Implantação</option>
-                    <option>Laboratório / Teste</option>
                     <option>Inativo</option>
                   </select>
                </div>
              </div>
              <div className="space-y-1">
                 <label className="text-[10px] uppercase font-black text-slate-400 tracking-widest ml-1">Notas de Documentação</label>
-                <textarea className="w-full p-4 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 outline-none transition-all placeholder:text-slate-300 min-h-[120px]" placeholder="Descreva detalhes de topologia, VLANs de gerência ou contratos..."></textarea>
+                <textarea className="w-full p-4 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 outline-none transition-all min-h-[120px]" placeholder="Descreva detalhes técnicos..."></textarea>
              </div>
           </div>
         </GenericModal>

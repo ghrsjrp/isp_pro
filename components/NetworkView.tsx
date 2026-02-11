@@ -1,7 +1,7 @@
 
 import React from 'react';
-import { MOCK_PEERS, MOCK_INTERNAL_LINKS } from '../constants';
-import StatusBadge from './StatusBadge';
+import { MOCK_PEERS, MOCK_INTERNAL_LINKS } from '../constants.tsx';
+import StatusBadge from './StatusBadge.tsx';
 
 const NetworkView: React.FC = () => {
   return (
@@ -9,7 +9,7 @@ const NetworkView: React.FC = () => {
       <section>
         <div className="flex justify-between items-center mb-4">
             <h3 className="text-xl font-bold text-slate-800">Conectividade EGP (BGP External)</h3>
-            <button className="bg-blue-600 text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-blue-700 transition-colors shadow-lg shadow-blue-600/20">
+            <button className="bg-indigo-600 text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-indigo-700 transition-colors shadow-lg">
                 + Novo Peer
             </button>
         </div>
@@ -36,7 +36,7 @@ const NetworkView: React.FC = () => {
                     </td>
                     <td className="px-6 py-4">
                       <p className="font-semibold text-slate-800">{peer.neighbor}</p>
-                      <p className="text-xs text-blue-500 font-mono">AS{peer.asn}</p>
+                      <p className="text-xs text-indigo-500 font-mono">AS{peer.asn}</p>
                     </td>
                     <td className="px-6 py-4">
                       <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-slate-100 text-slate-600">{peer.type}</span>
@@ -84,7 +84,7 @@ const NetworkView: React.FC = () => {
                     </td>
                     <td className="px-6 py-4">
                       <p className="font-mono text-xs text-slate-500">{link.localIp}</p>
-                      <p className="text-[10px] text-blue-500 font-bold uppercase tracking-tighter">VLAN {link.vlan}</p>
+                      <p className="text-[10px] text-indigo-500 font-bold uppercase tracking-tighter">VLAN {link.vlan}</p>
                     </td>
                     <td className="px-6 py-4">
                       <span className="text-xs font-bold text-slate-600">{link.protocol}</span>
